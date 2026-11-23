@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase, getTodayIST, getTodayFee, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';
-import { PhonePlus, AlertTriangle, IndianRupee, CheckCircle } from 'lucide-react';
+import { PhoneCall, AlertTriangle, IndianRupee, CheckCircle } from 'lucide-react';
 
 export default function HelpdeskPage() {
   const { tokens, refetch } = useLiveQueue();
@@ -59,7 +59,7 @@ export default function HelpdeskPage() {
       <div className="max-w-2xl mx-auto space-y-5">
         <header className="bg-blue-700 text-white rounded-2xl p-5 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold">Helpdesk Counter</h1>
+            <PhoneCall className="w-4 h-4 text-blue-600" />
             <p className="text-xs text-blue-100">Dr. Ajaz Clinic • Chhatrapati Sambhajinagar</p>
           </div>
           <div className="text-right">
