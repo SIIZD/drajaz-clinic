@@ -6,9 +6,14 @@ import { supabase, QueueToken, getTodayIST } from '@/lib/supabase';
 export function useLiveQueue() {
   const [tokens, setTokens] = useState<QueueToken[]>([]);
   const [loading, setLoading] = useState(true);
-  const sessionDate = getTodayIST();
+  const [sessionDate, setSessionDate] = useState<string>('');
+
+  useEffect(() => {
+    setSessionDate(getTodayIST());
+  }, []);
 
   const fetchQueue = useCallback(async () => {
+    if (!sessionDate) return;
     const { data, error } = await supabase
       .from('queue_tokens')
       .select('*')
@@ -23,6 +28,7 @@ export function useLiveQueue() {
   }, [sessionDate]);
 
   useEffect(() => {
+    if (!sessionDate) return;
     fetchQueue();
 
     const channel = supabase

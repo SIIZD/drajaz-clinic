@@ -13,11 +13,13 @@ function ScanContent() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [todayFee, setTodayFee] = useState<number>(300);
   const [bookedTokenId, setBookedTokenId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
+    setTodayFee(getTodayFee());
     const savedId = localStorage.getItem('drajaz_active_token_id');
     if (savedId) setBookedTokenId(savedId);
   }, []);
@@ -153,7 +155,7 @@ function ScanContent() {
         </div>
         <div>
           <div className="text-slate-500">Today's Fee</div>
-          <div className="font-bold text-base text-emerald-700">₹{getTodayFee()}</div>
+          <div className="font-bold text-base text-emerald-700">₹{todayFee}</div>
         </div>
       </div>
 
