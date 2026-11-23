@@ -2,7 +2,16 @@
 
 import { supabase, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';
-import { Stethoscope, UserCheck, CheckCircle2, SkipForward } from 'lucide-react';
+import { PinGate } from '@/components/PinGate';
+import {
+  Stethoscope,
+  UserCheck,
+  CheckCircle2,
+  SkipForward,
+  Users,
+  CheckCheck,
+  Phone,
+} from 'lucide-react';
 
 export default function DoctorPage() {
   const { tokens, refetch } = useLiveQueue();
@@ -40,113 +49,190 @@ export default function DoctorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-4">
-      <div className="max-w-xl mx-auto space-y-5">
-        <header className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <div className="flex items-center gap-2.5">
-            <Stethoscope className="w-6 h-6 text-emerald-400" />
-            <div>
-              <h1 className="font-bold text-lg">Dr. Ajaz Cabin Console</h1>
-              <p className="text-xs text-slate-400">Live OPD Queue</p>
-            </div>
-          </div>
-          <div className="text-right text-xs text-slate-400">
-            <div>Completed Today: <span className="text-white font-bold">{completedCount}</span></div>
-            <div>Waiting: <span className="text-amber-400 font-bold">{waiting.length}</span></div>
-          </div>
-        </header>
-
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <div className="text-xs uppercase tracking-wider text-emerald-400 font-semibold">
-            Currently Inside Cabin
-          </div>
-          {inCabin ? (
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <div className="text-3xl font-extrabold">
-                  #{inCabin.token_number} • {inCabin.patient_name}
-                </div>
-                <div className="text-xs text-slate-400 mt-1 flex items-center gap-2">
-                  <span>{inCabin.patient_phone}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded font-bold ${
-                      inCabin.payment_status === 'PAID'
-                        ? 'bg-emerald-950 text-emerald-400 border border-emerald-700'
-                        : 'bg-red-950 text-red-400 border border-red-700'
-                    }`}
-                  >
-                    {inCabin.payment_status} (₹{inCabin.fee_amount})
-                  </span>
-                </div>
+    <PinGate role="DOCTOR" title="Dr. Ajaz Cabin Console">
+      <main className="min-h-screen bg-slate-950 text-white p-4 sm:p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Header & OPD Metrics */}
+          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400">
+                <Stethoscope className="w-6 h-6" />
               </div>
-              <button
-                onClick={completeCurrent}
-                className="px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-sm flex items-center gap-1.5 shrink-0"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                Done
-              </button>
-            </div>
-          ) : (
-            <div className="text-sm text-slate-400 py-2">Cabin is currently empty.</div>
-          )}
-        </section>
-
-        <section className="space-y-2.5">
-          <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
-            Up Next ({waiting.length})
-          </div>
-          {waiting.map((token, idx) => (
-            <div
-              key={token.id}
-              className={`rounded-xl p-4 border flex items-center justify-between gap-3 ${
-                idx === 0
-                  ? 'bg-slate-900 border-emerald-600/60'
-                  : 'bg-slate-900/60 border-slate-800'
-              }`}
-            >
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-extrabold">#{token.token_number}</span>
-                  <span className="font-semibold">{token.patient_name}</span>
-                  {token.is_emergency && (
-                    <span className="px-2 py-0.5 text-[10px] font-bold bg-red-600 text-white rounded-full">
-                      EMERGENCY
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                  <span>{token.booking_source}</span>
-                  <span
-                    className={
-                      token.payment_status === 'PAID' ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'
-                    }
-                  >
-                    • {token.payment_status} ₹{token.fee_amount}
-                  </span>
+                <h1 className="font-bold text-xl tracking-tight">Dr. Ajaz Cabin Console</h1>
+                <p className="text-xs text-slate-400">Chhatrapati Sambhajinagar • Live OPD</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 flex items-center gap-2.5">
+                <Users className="w-4 h-4 text-amber-400" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400">Waiting</div>
+                  <div className="text-base font-extrabold text-amber-400 tabular-nums">
+                    {waiting.length}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 flex items-center gap-2.5">
+                <CheckCheck className="w-4 h-4 text-emerald-400" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400">Completed</div>
+                  <div className="text-base font-extrabold text-emerald-400 tabular-nums">
+                    {completedCount}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Active Cabin Spotlight */}
+          <section className="bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/50 border border-teal-500/30 rounded-3xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-teal-400 font-bold">
+                <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+                Currently Inside Cabin
+              </span>
+              {inCabin && (
+                <span className="text-xs text-slate-400">{inCabin.booking_source}</span>
+              )}
+            </div>
+
+            {inCabin ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-teal-500 text-slate-950 flex items-center justify-center font-black text-2xl tabular-nums shrink-0">
+                    #{inCabin.token_number}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-extrabold text-white">{inCabin.patient_name}</h2>
+                    <div className="flex flex-wrap items-center gap-3 mt-1 text-xs">
+                      <span className="inline-flex items-center gap-1 text-slate-300 tabular-nums">
+                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        {inCabin.patient_phone}
+                      </span>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full font-bold ${
+                          inCabin.payment_status === 'PAID'
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                        }`}
+                      >
+                        {inCabin.payment_status} • ₹{inCabin.fee_amount}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => skipToken(token)}
-                  title="Skip absent patient"
-                  className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  onClick={completeCurrent}
+                  className="px-5 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 shrink-0 transition"
                 >
-                  <SkipForward className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => callIn(token)}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-sm flex items-center gap-1.5"
-                >
-                  <UserCheck className="w-4 h-4" />
-                  Call In
+                  <CheckCircle2 className="w-4 h-4" />
+                  Complete Visit
                 </button>
               </div>
+            ) : (
+              <div className="py-4 text-sm text-slate-400 flex items-center justify-between">
+                <span>Cabin is currently vacant. Call the next waiting patient below.</span>
+                {waiting[0] && (
+                  <button
+                    onClick={() => callIn(waiting[0])}
+                    className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center gap-1.5 transition"
+                  >
+                    <UserCheck className="w-4 h-4" />
+                    Call #{waiting[0].token_number}
+                  </button>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* Up Next Queue */}
+          <section className="space-y-3">
+            <div className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+              Up Next in Queue ({waiting.length})
             </div>
-          ))}
-        </section>
-      </div>
-    </main>
+
+            {waiting.length === 0 ? (
+              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 text-center text-sm text-slate-500">
+                No patients waiting in the queue.
+              </div>
+            ) : (
+              waiting.map((token, idx) => (
+                <div
+                  key={token.id}
+                  className={`rounded-2xl p-4 border flex items-center justify-between gap-3 transition ${
+                    idx === 0
+                      ? 'bg-slate-900 border-teal-500/60 shadow-md'
+                      : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg tabular-nums shrink-0 ${
+                        token.is_emergency
+                          ? 'bg-red-600 text-white'
+                          : idx === 0
+                          ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                          : 'bg-slate-800 text-slate-200'
+                      }`}
+                    >
+                      #{token.token_number}
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-bold text-base text-white">{token.patient_name}</span>
+                        {token.is_emergency && (
+                          <span className="px-2 py-0.5 text-[10px] font-bold bg-red-600 text-white rounded-full">
+                            EMERGENCY
+                          </span>
+                        )}
+                        {idx === 0 && (
+                          <span className="px-2 py-0.5 text-[10px] font-bold bg-teal-500/20 text-teal-300 rounded-full">
+                            NEXT
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-2">
+                        <span>{token.booking_source}</span>
+                        <span>•</span>
+                        <span
+                          className={
+                            token.payment_status === 'PAID'
+                              ? 'text-emerald-400 font-bold'
+                              : 'text-red-400 font-bold'
+                          }
+                        >
+                          {token.payment_status} (₹{token.fee_amount})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => skipToken(token)}
+                      title="Skip absent patient"
+                      className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition"
+                    >
+                      <SkipForward className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => callIn(token)}
+                      className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-sm flex items-center gap-1.5 transition"
+                    >
+                      <UserCheck className="w-4 h-4" />
+                      Call In
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+        </div>
+      </main>
+    </PinGate>
   );
 }
