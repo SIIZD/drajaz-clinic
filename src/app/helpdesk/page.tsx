@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, getTodayIST, getTodayFee, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';
 import { PhoneCall, AlertTriangle, IndianRupee, CheckCircle } from 'lucide-react';
@@ -9,9 +9,14 @@ export default function HelpdeskPage() {
   const { tokens, refetch } = useLiveQueue();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [todayFee, setTodayFee] = useState<number>(300);
   const [source, setSource] = useState<'HELPDESK_PHONE' | 'HELPDESK_WALKIN'>('HELPDESK_PHONE');
   const [isEmergency, setIsEmergency] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setTodayFee(getTodayFee());
+  }, []);
 
   const activeTokens = tokens.filter((t) => t.status === 'WAITING' || t.status === 'IN_CABIN');
 
@@ -77,7 +82,7 @@ export default function HelpdeskPage() {
               <PhoneCall className="w-4 h-4 text-blue-600" />
               Add Phone / Walk-In / Emergency Patient
             </h2>
-            <span className="text-xs font-semibold text-slate-500">Fee: ₹{getTodayFee()}</span>
+            <span className="text-xs font-semibold text-slate-500">Fee: ₹{todayFee}</span>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
