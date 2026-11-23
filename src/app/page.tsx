@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { QrCode, PhoneCall, Stethoscope, ShieldCheck } from 'lucide-react';
 
 export default function HomePage() {

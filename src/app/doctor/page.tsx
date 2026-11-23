@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { supabase, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';

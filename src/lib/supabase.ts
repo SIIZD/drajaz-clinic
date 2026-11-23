@@ -1,21 +1,15 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+﻿import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://muovpxhmcoltlulmrays.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
 let cachedClient: SupabaseClient | null = null;
 
-function getSupabaseClient(): SupabaseClient {
+export const supabase: SupabaseClient = (() => {
   if (cachedClient) return cachedClient;
-  if (!supabaseUrl || !supabaseAnonKey) {
-    // Fallback during build/prerender when env vars are not injected yet
-    return createClient('https://placeholder.supabase.co', 'public-anon-key');
-  }
   cachedClient = createClient(supabaseUrl, supabaseAnonKey);
   return cachedClient;
-}
-
-export const supabase = getSupabaseClient();
+})();
 
 export type QueueToken = {
   id: string;
