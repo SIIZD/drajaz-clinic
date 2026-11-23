@@ -2,19 +2,20 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { supabase, getTodayFee } from '@/lib/supabase';
+import { supabase, getTodayFee, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';
 import { MapPin, CheckCircle2, AlertCircle, Clock, Loader2 } from 'lucide-react';
 
 function ScanContent() {
   const searchParams = useSearchParams();
   const qrKey = searchParams.get('key') || '';
-  const { tokens } = useLiveQueue();
+  const { tokens, refetch } = useLiveQueue();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [todayFee, setTodayFee] = useState<number>(300);
   const [bookedTokenId, setBookedTokenId] = useState<string | null>(null);
+  const [bookedTokenData, setBookedTokenData] = useState<QueueToken | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -24,7 +25,8 @@ function ScanContent() {
     if (savedId) setBookedTokenId(savedId);
   }, []);
 
-  const myToken = tokens.find((t) => t.id === bookedTokenId);
+  const liveMatch = tokens.find((t) => t.id === bookedTokenId);
+  const myToken = liveMatch || bookedTokenData;
   const inCabin = tokens.find((t) => t.status === 'IN_CABIN');
   const waitingList = tokens.filter((t) => t.status === 'WAITING');
 
@@ -65,7 +67,11 @@ function ScanContent() {
 
         if (data && data.id) {
           setBookedTokenId(data.id);
+          setBookedTokenData(data as QueueToken);
           localStorage.setItem('drajaz_active_token_id', data.id);
+          refetch();
+        } else {
+          setErrorMsg('Booking did not return a token. Please try again.');
         }
       },
       () => {
@@ -79,7 +85,8 @@ function ScanContent() {
   };
 
   if (myToken && (myToken.status === 'WAITING' || myToken.status === 'IN_CABIN')) {
-    const patientsAhead = waitingList.findIndex((t) => t.id === myToken.id);
+    const idxInWaiting = waitingList.findIndex((t) => t.id === myToken.id);
+    const patientsAhead = idxInWaiting >= 0 ? idxInWaiting : waitingList.length;
     const estWaitMins = patientsAhead > 0 ? patientsAhead * 7 : 0;
 
     return (
@@ -129,6 +136,7 @@ function ScanContent() {
           onClick={() => {
             localStorage.removeItem('drajaz_active_token_id');
             setBookedTokenId(null);
+            setBookedTokenData(null);
           }}
           className="text-xs text-slate-400 underline"
         >
