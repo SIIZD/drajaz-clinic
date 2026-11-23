@@ -60,7 +60,7 @@ export default function DoctorPage() {
               </div>
               <div>
                 <h1 className="font-bold text-xl tracking-tight">Dr. Ajaz Cabin Console</h1>
-                <p className="text-xs text-slate-400">Chhatrapati Sambhajinagar • Live OPD</p>
+                <p className="text-xs text-slate-400">Aurangabad • Live OPD</p>
               </div>
             </div>
 

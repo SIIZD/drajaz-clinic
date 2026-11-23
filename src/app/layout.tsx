@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Dr. Ajaz Clinic • Hospital Queue Management System',
   description:
-    'Live OPD Token Registration, Helpdesk Counter, and Cabin Console — Dr. Ajaz Clinic, Chhatrapati Sambhajinagar.',
+    'Live OPD Token Registration, Helpdesk Counter, and Cabin Console — Dr. Ajaz Clinic, Aurangabad.',
 };
 
 export default function RootLayout({

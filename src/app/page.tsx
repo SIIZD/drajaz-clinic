@@ -29,7 +29,7 @@ export default function HomePage() {
               <h1 className="text-2xl font-bold tracking-tight text-white">Dr. Ajaz Clinic</h1>
               <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                 <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                Chhatrapati Sambhajinagar, Maharashtra
+                Aurangabad, Maharashtra
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
       </section>
 
       <footer className="border-t border-slate-200/80 py-4 px-5 text-center text-xs text-slate-400">
-        Dr. Ajaz Clinic • Chhatrapati Sambhajinagar • Real-Time Queue Management
+        Dr. Ajaz Clinic • Aurangabad • Real-Time Queue Management
       </footer>
     </main>
   );
