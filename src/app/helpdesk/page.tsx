@@ -74,7 +74,7 @@ export default function HelpdeskPage() {
         >
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-              <PhonePlus className="w-4 h-4 text-blue-600" />
+              <PhoneCall className="w-4 h-4 text-blue-600" />
               Add Phone / Walk-In / Emergency Patient
             </h2>
             <span className="text-xs font-semibold text-slate-500">Fee: ₹{getTodayFee()}</span>
