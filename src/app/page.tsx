@@ -1,69 +1,74 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { QrCode, PhoneCall, Stethoscope, ShieldCheck } from 'lucide-react';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen bg-slate-50 text-slate-900 p-6 flex flex-col items-center justify-center">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-bold text-slate-900">Dr. Ajaz Clinic</h1>
+          <p className="text-sm text-slate-500">
+            Chhatrapati Sambhajinagar • Live Queue System
+          </p>
+          <p className="text-xs text-slate-400">
+            Morning: 10:00 AM – 4:00 PM • Evening: 6:30 PM – 11:00 PM
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="grid gap-3">
+          <Link
+            href="/scan?key=DRAJAZ_V8QR5X_SECRET"
+            className="flex items-center gap-3 p-4 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <QrCode className="w-6 h-6 shrink-0" />
+            <div>
+              <div>Patient QR Token Scan</div>
+              <div className="text-xs font-normal text-emerald-100">
+                GPS geofenced self-registration
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/helpdesk"
+            className="flex items-center gap-3 p-4 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
           >
-            Documentation
-          </a>
+            <PhoneCall className="w-6 h-6 shrink-0" />
+            <div>
+              <div>Helpdesk & Fee Counter</div>
+              <div className="text-xs font-normal text-blue-100">
+                Phone/walk-in booking & ₹300/₹400 collection
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/doctor"
+            className="flex items-center gap-3 p-4 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition"
+          >
+            <Stethoscope className="w-6 h-6 shrink-0" />
+            <div>
+              <div>Dr. Ajaz Cabin Console</div>
+              <div className="text-xs font-normal text-slate-300">
+                Call next patient, monitor live queue & fee status
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin"
+            className="flex items-center gap-3 p-4 rounded-xl bg-slate-100 text-slate-800 font-semibold hover:bg-slate-200 transition border border-slate-200"
+          >
+            <ShieldCheck className="w-6 h-6 shrink-0 text-slate-600" />
+            <div>
+              <div>Admin Queue Override</div>
+              <div className="text-xs font-normal text-slate-500">
+                Reorder tokens & manage daily sessions
+              </div>
+            </div>
+          </Link>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
