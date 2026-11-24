@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase, getTodayFee, QueueToken } from '@/lib/supabase';
 import { useLiveQueue } from '@/hooks/useLiveQueue';
+import { isTokenBookingOpenIST, getBookingWindowStatusText } from '@/lib/bookingWindow';
 import {
   MapPin,
   CheckCircle2,
@@ -25,6 +26,8 @@ function ScanContent() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [todayFee, setTodayFee] = useState<number>(300);
+  const [bookingOpen, setBookingOpen] = useState<boolean>(() => isTokenBookingOpenIST());
+  const [windowText, setWindowText] = useState<string>(() => getBookingWindowStatusText());
   const [bookedTokenId, setBookedTokenId] = useState<string | null>(null);
   const [bookedTokenData, setBookedTokenData] = useState<QueueToken | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -34,6 +37,14 @@ function ScanContent() {
     setTodayFee(getTodayFee());
     const savedId = localStorage.getItem('drajaz_active_token_id');
     if (savedId) setBookedTokenId(savedId);
+
+    const syncWindow = () => {
+      setBookingOpen(isTokenBookingOpenIST());
+      setWindowText(getBookingWindowStatusText());
+    };
+    syncWindow();
+    const timer = setInterval(syncWindow, 30000);
+    return () => clearInterval(timer);
   }, []);
 
   const liveMatch = tokens.find((t) => t.id === bookedTokenId);
@@ -44,6 +55,13 @@ function ScanContent() {
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+
+    if (!isTokenBookingOpenIST()) {
+      setBookingOpen(false);
+      setWindowText(getBookingWindowStatusText());
+      setErrorMsg(getBookingWindowStatusText());
+      return;
+    }
 
     if (!name.trim() || !/^\d{10}$/.test(phone.trim())) {
       setErrorMsg('Please enter your full name and a valid 10-digit mobile number.');
@@ -102,7 +120,6 @@ function ScanContent() {
 
     return (
       <div className="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-slate-200/70 border border-slate-200 overflow-hidden">
-        {/* Top Clinic Strip */}
         <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-teal-400" />
@@ -141,7 +158,6 @@ function ScanContent() {
             </div>
           )}
 
-          {/* Live Metrics */}
           <div className="grid grid-cols-2 gap-3 text-left">
             <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
               <div className="text-[11px] font-medium text-slate-500">Now in Cabin</div>
@@ -161,7 +177,6 @@ function ScanContent() {
             </div>
           </div>
 
-          {/* Fee Banner */}
           <div
             className={`rounded-2xl p-3.5 text-xs flex items-center justify-between border ${
               myToken.payment_status === 'PAID'
@@ -204,7 +219,6 @@ function ScanContent() {
 
   return (
     <div className="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-slate-200/70 border border-slate-200 overflow-hidden">
-      {/* Header Banner */}
       <div className="bg-slate-900 text-white p-6 text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-400/30 text-teal-300 text-[11px] font-semibold">
           <MapPin className="w-3 h-3" />
@@ -215,7 +229,6 @@ function ScanContent() {
       </div>
 
       <div className="p-6 space-y-5">
-        {/* Live Queue & Fee Summary */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
@@ -240,6 +253,17 @@ function ScanContent() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div
+          className={`p-3 rounded-2xl text-xs flex items-start gap-2 border ${
+            bookingOpen
+              ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
+              : 'bg-amber-50 border-amber-200 text-amber-950'
+          }`}
+        >
+          <Clock className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{windowText}</span>
         </div>
 
         {errorMsg && (
@@ -281,7 +305,7 @@ function ScanContent() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !bookingOpen}
             className="w-full py-3.5 rounded-xl bg-teal-600 text-white font-semibold text-sm hover:bg-teal-700 disabled:opacity-60 shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 transition"
           >
             {submitting ? (
@@ -292,14 +316,14 @@ function ScanContent() {
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                Get Live Token
+                {bookingOpen ? 'Get Live Token' : 'Booking Closed'}
               </>
             )}
           </button>
 
           <p className="text-[11px] text-center text-slate-400 flex items-center justify-center gap-1">
             <Clock className="w-3 h-3" />
-            Estimated consultation time: ~7 mins per patient
+            Hours: 10:00 AM – 4:00 PM & 6:30 PM – 11:00 PM IST (~7m/patient)
           </p>
         </form>
       </div>

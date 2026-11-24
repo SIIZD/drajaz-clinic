@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, getTodayIST, getTodayFee, QueueToken } from '@/lib/supabase';
 import { PinGate, useStaffPin } from '@/components/PinGate';
+import EndOfDaySettlementCard from '@/components/EndOfDaySettlementCard';
 import {
   PhoneCall,
   AlertTriangle,
@@ -16,6 +17,7 @@ import {
 function HelpdeskConsole() {
   const pin = useStaffPin();
   const [tokens, setTokens] = useState<QueueToken[]>([]);
+  const [sessionDate, setSessionDate] = useState<string>(() => getTodayIST());
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [todayFee, setTodayFee] = useState<number>(300);
@@ -26,10 +28,12 @@ function HelpdeskConsole() {
 
   const loadStaffQueue = useCallback(async () => {
     if (!pin) return;
+    const today = getTodayIST();
+    setSessionDate(today);
     const { data } = await supabase.rpc('staff_get_queue', {
       p_role: 'HELPDESK',
       p_pin: pin,
-      p_session_date: getTodayIST(),
+      p_session_date: today,
     });
     if (data) setTokens(data as QueueToken[]);
   }, [pin]);
@@ -131,6 +135,8 @@ function HelpdeskConsole() {
             </div>
           </div>
         </div>
+
+        <EndOfDaySettlementCard tokens={tokens} sessionDate={sessionDate} />
 
         <div className="grid lg:grid-cols-5 gap-6 items-start">
           <form
@@ -288,26 +294,27 @@ function HelpdeskConsole() {
 
                   <div className="flex items-center justify-end gap-2">
                     {token.payment_status === 'PAID' ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        PAID ₹{token.fee_amount} ({token.payment_mode})
+                        PAID • {token.payment_mode}
                       </span>
                     ) : (
-                      <div className="flex gap-2">
+                      <>
                         <button
+                          type="button"
                           onClick={() => markPaid(token, 'CASH')}
-                          className="px-3 py-2 rounded-xl bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 shadow-sm flex items-center gap-1 transition"
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
                         >
-                          <IndianRupee className="w-3 h-3" />
-                          {token.fee_amount} Cash
+                          ₹{token.fee_amount} Cash
                         </button>
                         <button
+                          type="button"
                           onClick={() => markPaid(token, 'UPI')}
-                          className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-sm transition"
+                          className="px-3 py-1.5 rounded-xl bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 transition"
                         >
                           UPI
                         </button>
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>
