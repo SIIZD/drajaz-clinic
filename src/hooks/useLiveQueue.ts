@@ -15,7 +15,7 @@ export function useLiveQueue() {
   const fetchQueue = useCallback(async () => {
     if (!sessionDate) return;
     const { data, error } = await supabase
-      .from('queue_tokens')
+      .from('public_queue_board')
       .select('*')
       .eq('session_date', sessionDate)
       .order('sort_order', { ascending: true })

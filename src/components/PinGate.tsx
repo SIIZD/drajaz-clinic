@@ -1,11 +1,16 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Lock, Loader2, LogOut, ShieldAlert, ArrowLeft, Activity } from 'lucide-react';
 
 type StaffRole = 'HELPDESK' | 'DOCTOR' | 'ADMIN';
+
+const StaffPinContext = createContext<string>('');
+export function useStaffPin() {
+  return useContext(StaffPinContext);
+}
 
 export function PinGate({
   role,
@@ -18,13 +23,16 @@ export function PinGate({
 }) {
   const storageKey = `drajaz_pin_ok_${role}`;
   const [unlocked, setUnlocked] = useState(false);
+  const [activePin, setActivePin] = useState('');
   const [checkingSession, setCheckingSession] = useState(true);
   const [pin, setPin] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (sessionStorage.getItem(storageKey) === '1') {
+    const saved = sessionStorage.getItem(storageKey);
+    if (saved) {
+      setActivePin(saved);
       setUnlocked(true);
     }
     setCheckingSession(false);
@@ -34,10 +42,11 @@ export function PinGate({
     e.preventDefault();
     setError(null);
     setVerifying(true);
+    const cleanPin = pin.trim();
 
     const { data, error: rpcError } = await supabase.rpc('verify_staff_pin', {
       p_role: role,
-      p_pin: pin.trim(),
+      p_pin: cleanPin,
     });
 
     setVerifying(false);
@@ -48,12 +57,14 @@ export function PinGate({
       return;
     }
 
-    sessionStorage.setItem(storageKey, '1');
+    sessionStorage.setItem(storageKey, cleanPin);
+    setActivePin(cleanPin);
     setUnlocked(true);
   };
 
   const handleLock = () => {
     sessionStorage.removeItem(storageKey);
+    setActivePin('');
     setUnlocked(false);
     setPin('');
   };
@@ -128,38 +139,40 @@ export function PinGate({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-slate-200 px-4 py-2.5">
-        <div className="max-w-4xl mx-auto flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2.5">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 font-semibold text-white hover:text-teal-300 transition"
-            >
-              <Activity className="w-4 h-4 text-teal-400" />
-              <span>Dr. Ajaz Clinic</span>
-            </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300 font-medium">{title}</span>
-          </div>
+    <StaffPinContext.Provider value={activePin}>
+      <div className="min-h-screen flex flex-col">
+        <nav className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-slate-200 px-4 py-2.5">
+          <div className="max-w-4xl mx-auto flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2.5">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 font-semibold text-white hover:text-teal-300 transition"
+              >
+                <Activity className="w-4 h-4 text-teal-400" />
+                <span>Dr. Ajaz Clinic</span>
+              </Link>
+              <span className="text-slate-600">/</span>
+              <span className="text-slate-300 font-medium">{title}</span>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Live Sync
-            </span>
-            <button
-              type="button"
-              onClick={handleLock}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              Lock
-            </button>
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live Sync
+              </span>
+              <button
+                type="button"
+                onClick={handleLock}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Lock
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
-      <div className="flex-1">{children}</div>
-    </div>
+        </nav>
+        <div className="flex-1">{children}</div>
+      </div>
+    </StaffPinContext.Provider>
   );
 }
