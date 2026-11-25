@@ -119,7 +119,7 @@ function HelpdeskConsole() {
             <div>
               <div className="text-xs text-slate-500 font-medium">Collected Today</div>
               <div className="text-xl sm:text-2xl font-extrabold text-emerald-700 tabular-nums">
-                â‚¹{totalCollected}
+                ₹{totalCollected}
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ function HelpdeskConsole() {
             <div>
               <div className="text-xs text-slate-500 font-medium">Standard Fee</div>
               <div className="text-xl sm:text-2xl font-extrabold text-slate-900 tabular-nums">
-                â‚¹{todayFee}
+                ₹{todayFee}
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@ function HelpdeskConsole() {
                         )}
                       </div>
                       <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
-                        {token.patient_phone} â€¢{' '}
+                        {token.patient_phone}  • {' '}
                         <span className="font-medium text-slate-600">{token.booking_source}</span>
                       </div>
                     </div>
@@ -297,7 +297,7 @@ function HelpdeskConsole() {
                     {token.payment_status === 'PAID' ? (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        PAID â€¢ {token.payment_mode}
+                        PAID  •  {token.payment_mode}
                       </span>
                     ) : (
                       <>
@@ -306,7 +306,7 @@ function HelpdeskConsole() {
                           onClick={() => markPaid(token, 'CASH')}
                           className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
                         >
-                          â‚¹{token.fee_amount} Cash
+                          ₹{token.fee_amount} Cash
                         </button>
                         <button
                           type="button"
