@@ -1,5 +1,6 @@
 'use client';
 
+import { formatShiftTokenLabel } from '@/lib/bookingWindow';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, getTodayIST, QueueToken } from '@/lib/supabase';
 import { PinGate, useStaffPin } from '@/components/PinGate';
@@ -146,7 +147,7 @@ function DoctorConsole() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-teal-500 text-slate-950 flex items-center justify-center font-black text-2xl tabular-nums shrink-0">
-                  #{inCabin.token_number}
+                  {formatShiftTokenLabel(inCabin.token_number, inCabin.shift_slot, inCabin.created_at)}
                 </div>
                 <div>
                   <h2 className="text-2xl font-extrabold text-white">{inCabin.patient_name}</h2>
@@ -221,7 +222,7 @@ function DoctorConsole() {
                         : 'bg-slate-800 text-slate-200'
                     }`}
                   >
-                    #{token.token_number}
+                    {formatShiftTokenLabel(token.token_number, token.shift_slot, token.created_at)}
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">

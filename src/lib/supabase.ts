@@ -1,4 +1,4 @@
-﻿import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://muovpxhmcoltlulmrays.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
@@ -14,6 +14,7 @@ export const supabase: SupabaseClient = (() => {
 export type QueueToken = {
   id: string;
   session_date: string;
+  shift_slot?: 'MORNING' | 'EVENING';
   token_number: number;
   patient_name: string;
   patient_phone: string;

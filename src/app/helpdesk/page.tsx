@@ -1,5 +1,6 @@
 'use client';
 
+import { formatShiftTokenLabel } from '@/lib/bookingWindow';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, getTodayIST, getTodayFee, QueueToken } from '@/lib/supabase';
 import { PinGate, useStaffPin } from '@/components/PinGate';
@@ -268,7 +269,7 @@ function HelpdeskConsole() {
                           : 'bg-slate-900 text-white'
                       }`}
                     >
-                      #{token.token_number}
+                      {formatShiftTokenLabel(token.token_number, token.shift_slot, token.created_at)}
                     </div>
                     <div>
                       <div className="flex flex-wrap items-center gap-2">

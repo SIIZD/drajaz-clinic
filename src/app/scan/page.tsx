@@ -1,5 +1,6 @@
 'use client';
 
+import { formatShiftTokenLabel } from '@/lib/bookingWindow';
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase, getTodayFee, QueueToken } from '@/lib/supabase';
@@ -138,7 +139,7 @@ function ScanContent() {
                 <BellRing className="w-6 h-6" />
               </div>
               <div className="text-xs uppercase tracking-widest font-semibold text-emerald-100">
-                Token #{myToken.token_number}
+                Token {formatShiftTokenLabel(myToken.token_number, myToken.shift_slot, myToken.created_at)}
               </div>
               <h2 className="text-2xl font-extrabold">It's Your Turn Now!</h2>
               <p className="text-xs text-emerald-50">
@@ -151,7 +152,7 @@ function ScanContent() {
                 Confirmed OPD Token
               </div>
               <div className="text-6xl font-black tracking-tight tabular-nums py-1">
-                #{myToken.token_number}
+                {formatShiftTokenLabel(myToken.token_number, myToken.shift_slot, myToken.created_at)}
               </div>
               <div className="text-sm font-medium text-slate-200">{myToken.patient_name}</div>
               <div className="text-xs text-slate-400">{myToken.patient_phone}</div>

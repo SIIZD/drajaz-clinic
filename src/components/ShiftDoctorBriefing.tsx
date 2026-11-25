@@ -1,5 +1,6 @@
 'use client';
 
+import { formatShiftTokenLabel } from '@/lib/bookingWindow';
 import { useState, useMemo } from 'react';
 import {
   Sun,
