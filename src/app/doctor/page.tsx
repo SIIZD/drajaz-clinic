@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, getTodayIST, QueueToken } from '@/lib/supabase';
 import { PinGate, useStaffPin } from '@/components/PinGate';
+import ShiftDoctorBriefing from '@/components/ShiftDoctorBriefing';
 import {
   Stethoscope,
   UserCheck,
@@ -11,18 +12,23 @@ import {
   Users,
   CheckCheck,
   Phone,
+  BarChart3,
 } from 'lucide-react';
 
 function DoctorConsole() {
   const pin = useStaffPin();
   const [tokens, setTokens] = useState<QueueToken[]>([]);
+  const [sessionDate, setSessionDate] = useState<string>(() => getTodayIST());
+  const [showBriefing, setShowBriefing] = useState<boolean>(true);
 
   const loadStaffQueue = useCallback(async () => {
     if (!pin) return;
+    const today = getTodayIST();
+    setSessionDate(today);
     const { data } = await supabase.rpc('staff_get_queue', {
       p_role: 'DOCTOR',
       p_pin: pin,
-      p_session_date: getTodayIST(),
+      p_session_date: today,
     });
     if (data) setTokens(data as QueueToken[]);
   }, [pin]);
@@ -77,7 +83,7 @@ function DoctorConsole() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white p-4 sm:p-6">
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-4xl mx-auto space-y-6">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400">
@@ -89,7 +95,7 @@ function DoctorConsole() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 flex items-center gap-2.5">
               <Users className="w-4 h-4 text-amber-400" />
               <div>
@@ -109,6 +115,19 @@ function DoctorConsole() {
                 </div>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setShowBriefing((prev) => !prev)}
+              className={`rounded-xl px-3.5 py-2.5 text-xs font-bold border flex items-center gap-1.5 transition ${
+                showBriefing
+                  ? 'bg-teal-600 border-teal-500 text-white'
+                  : 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              {showBriefing ? 'Hide Shift Report' : 'Shift & Fee Report'}
+            </button>
           </div>
         </header>
 
@@ -254,6 +273,16 @@ function DoctorConsole() {
             ))
           )}
         </section>
+
+        {showBriefing && (
+          <div className="text-slate-900 pt-2">
+            <ShiftDoctorBriefing
+              tokens={tokens}
+              sessionDate={sessionDate}
+              roleTitle="Dr. Ajaz Shift Completion & Fee Report"
+            />
+          </div>
+        )}
       </div>
     </main>
   );

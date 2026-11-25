@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, getTodayIST, getTodayFee, QueueToken } from '@/lib/supabase';
 import { PinGate, useStaffPin } from '@/components/PinGate';
 import EndOfDaySettlementCard from '@/components/EndOfDaySettlementCard';
+import ShiftDoctorBriefing from '@/components/ShiftDoctorBriefing';
 import {
   PhoneCall,
   AlertTriangle,
@@ -118,7 +119,7 @@ function HelpdeskConsole() {
             <div>
               <div className="text-xs text-slate-500 font-medium">Collected Today</div>
               <div className="text-xl sm:text-2xl font-extrabold text-emerald-700 tabular-nums">
-                ₹{totalCollected}
+                â‚¹{totalCollected}
               </div>
             </div>
           </div>
@@ -130,7 +131,7 @@ function HelpdeskConsole() {
             <div>
               <div className="text-xs text-slate-500 font-medium">Standard Fee</div>
               <div className="text-xl sm:text-2xl font-extrabold text-slate-900 tabular-nums">
-                ₹{todayFee}
+                â‚¹{todayFee}
               </div>
             </div>
           </div>
@@ -286,7 +287,7 @@ function HelpdeskConsole() {
                         )}
                       </div>
                       <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
-                        {token.patient_phone} •{' '}
+                        {token.patient_phone} â€¢{' '}
                         <span className="font-medium text-slate-600">{token.booking_source}</span>
                       </div>
                     </div>
@@ -296,7 +297,7 @@ function HelpdeskConsole() {
                     {token.payment_status === 'PAID' ? (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        PAID • {token.payment_mode}
+                        PAID â€¢ {token.payment_mode}
                       </span>
                     ) : (
                       <>
@@ -305,7 +306,7 @@ function HelpdeskConsole() {
                           onClick={() => markPaid(token, 'CASH')}
                           className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
                         >
-                          ₹{token.fee_amount} Cash
+                          â‚¹{token.fee_amount} Cash
                         </button>
                         <button
                           type="button"
@@ -322,6 +323,8 @@ function HelpdeskConsole() {
             )}
           </div>
         </div>
+
+        <ShiftDoctorBriefing tokens={tokens} sessionDate={sessionDate} roleTitle="Helpdesk Shift & Paid/Unpaid Ledger" />
       </div>
     </main>
   );
